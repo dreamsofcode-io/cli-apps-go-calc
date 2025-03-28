@@ -1,38 +1,42 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
-	"os"
 	"strconv"
 )
 
 func main() {
 	log.SetFlags(0)
 
-	if len(os.Args) < 2 {
+	var precision int
+	flag.IntVar(&precision, "precision", -1, "The number of decimal places to print out")
+	flag.Parse()
+
+	if len(flag.Args()) < 1 {
 		log.Fatalln("missing subcommand")
 	}
 
-	subcommand := os.Args[1]
-	args := os.Args[2:]
+	subcommand := flag.Arg(0)
+	args := flag.Args()[1:]
 
 	switch subcommand {
 	case "add":
-		addCmd(args)
+		addCmd(args, precision)
 	case "subtract":
-		subtractCmd(args)
+		subtractCmd(args, precision)
 	default:
 		log.Fatalln("invalid command")
 	}
 }
 
-func addCmd(args []string) {
+const bitSize = 64
+
+func addCmd(args []string, precision int) {
 	if len(args) != 2 {
 		log.Fatalln("incorrect arguments for add cmd")
 	}
-
-	const bitSize int = 64
 
 	num1, err := strconv.ParseFloat(args[0], bitSize)
 	if err != nil {
@@ -46,15 +50,13 @@ func addCmd(args []string) {
 
 	sum := num1 + num2
 
-	fmt.Println(sum)
+	printNumber(sum, precision)
 }
 
-func subtractCmd(args []string) {
+func subtractCmd(args []string, precision int) {
 	if len(args) != 2 {
 		log.Fatalln("incorrect arguments for add cmd")
 	}
-
-	const bitSize = 64
 
 	num1, err := strconv.ParseFloat(args[0], bitSize)
 	if err != nil {
@@ -68,5 +70,10 @@ func subtractCmd(args []string) {
 
 	sum := num1 - num2
 
-	fmt.Println(sum)
+	printNumber(sum, precision)
+}
+
+func printNumber(num float64, precision int) {
+	str := strconv.FormatFloat(num, 'f', precision, bitSize)
+	fmt.Println(str)
 }
