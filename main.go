@@ -27,6 +27,10 @@ func main() {
 		addCmd(args, precision)
 	case "subtract":
 		subtractCmd(args, precision)
+	case "multiply":
+		multiplyCmd(args, precision)
+	case "divide":
+		divideCmd(args, precision)
 	default:
 		log.Fatalln("invalid command")
 	}
@@ -69,7 +73,7 @@ func subtractCmd(args []string, precision int) {
 	args = flagSet.Args()
 
 	if len(args) != 2 {
-		log.Fatalln("incorrect arguments for add cmd")
+		log.Fatalln("incorrect arguments for subtract cmd")
 	}
 
 	num1, err := strconv.ParseFloat(args[0], bitSize)
@@ -82,16 +86,62 @@ func subtractCmd(args []string, precision int) {
 		log.Fatalln("invalid number:", err)
 	}
 
-	sum := num1 - num2
+	result := num1 - num2
 
 	if isAbsolute {
-		sum = math.Abs(sum)
+		result = math.Abs(result)
 	}
 
-	printNumber(sum, precision)
+	printNumber(result, precision)
+}
+
+func multiplyCmd(args []string, precision int) {
+	if len(args) != 2 {
+		log.Fatalln("incorrect arguments for multiply cmd")
+	}
+
+	num1, err := strconv.ParseFloat(args[0], bitSize)
+	if err != nil {
+		log.Fatalln("invalid number:", err)
+	}
+
+	num2, err := strconv.ParseFloat(args[1], bitSize)
+	if err != nil {
+		log.Fatalln("invalid number:", err)
+	}
+
+	result := num1 * num2
+
+	printNumber(result, precision)
+}
+
+func divideCmd(args []string, precision int) {
+	if len(args) != 2 {
+		log.Fatalln("incorrect arguments for divide cmd")
+	}
+
+	num1, err := strconv.ParseFloat(args[0], bitSize)
+	if err != nil {
+		log.Fatalln("invalid number:", err)
+	}
+
+	num2, err := strconv.ParseFloat(args[1], bitSize)
+	if err != nil {
+		log.Fatalln("invalid number:", err)
+	}
+
+	// Guard against division by zero
+	if num2 == 0 {
+		log.Fatalln("cannot divide by zero")
+	}
+
+	result := num1 / num2
+
+	printNumber(result, precision)
 }
 
 func printNumber(num float64, precision int) {
 	str := strconv.FormatFloat(num, 'f', precision, bitSize)
 	fmt.Println(str)
 }
+
