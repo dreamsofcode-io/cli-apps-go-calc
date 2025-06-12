@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"math"
 	"strconv"
 )
 
@@ -54,6 +55,19 @@ func addCmd(args []string, precision int) {
 }
 
 func subtractCmd(args []string, precision int) {
+	var isAbsolute bool
+
+	flagSet := flag.NewFlagSet("subtract", flag.ExitOnError)
+	flagSet.BoolVar(
+		&isAbsolute,
+		"abs",
+		false,
+		"Determines whether or not to print out the absolute value",
+	)
+	flagSet.Parse(args)
+
+	args = flagSet.Args()
+
 	if len(args) != 2 {
 		log.Fatalln("incorrect arguments for add cmd")
 	}
@@ -69,6 +83,10 @@ func subtractCmd(args []string, precision int) {
 	}
 
 	sum := num1 - num2
+
+	if isAbsolute {
+		sum = math.Abs(sum)
+	}
 
 	printNumber(sum, precision)
 }
